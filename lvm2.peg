@@ -1,0 +1,19 @@
+grammar CanopyLvm2
+
+document   <-  __ (pair)* __ [\0]? %make_document
+
+pair       <-  __ name __ "=" __ value __ %make_value_pair / __ name __ object __ %make_object_pair
+
+object     <-  "{" __ (pair)* __ "}" %make_object
+
+array      <-  "[" __ value __ ("," __ value)* __ "]" %make_array / "[" __ "]" %make_empty_array
+
+value      <-  (object / array / string / number)
+
+name       <-  [a-zA-Z0-9+_.-]+ %make_name
+
+string     <-  '"' ("\\" . / [^"])* '"' %make_string
+
+number     <-  "0" %make_zero / [1-9] [0-9]* %make_number
+
+__         <-  ([\s] / ([ ]* "#" [^\n]* "\n"))*
